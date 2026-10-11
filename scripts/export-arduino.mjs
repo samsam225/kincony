@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const dest=path.join(root,'arduino/Serre_Avicole_A6v3');
+fs.mkdirSync(dest,{recursive:true});
+for(const name of ['hardware.h','modbus.h','control.h','settings.h']) fs.copyFileSync(path.join(root,'include',name),path.join(dest,name));
+fs.copyFileSync(path.join(root,'src/main.cpp'),path.join(dest,'firmware.cpp'));
+fs.copyFileSync(path.join(root,'partitions.csv'),path.join(dest,'partitions.csv'));
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('web/index.html').replace('<script src="/app.js"></script>','<script>'+read('web/app.js')+'</script>');
+fs.writeFileSync(path.join(dest,'generated.h'),'#pragma once\nstatic const char PAGE[] PROGMEM = R"AVUI('+html+')AVUI";\nstatic const char DEFAULT_CONFIG[] = R"AVCFG('+read('config/example.json')+')AVCFG";\n');
+fs.writeFileSync(path.join(dest,'build_opt.h'),'-std=gnu++17\n');
+fs.writeFileSync(path.join(dest,'Serre_Avicole_A6v3.ino'),'// Ouvrir ce fichier dans Arduino IDE. setup() et loop() sont dans firmware.cpp.\n#include <Arduino.h>\n');
+console.log('Sketch Arduino exporté : '+dest);

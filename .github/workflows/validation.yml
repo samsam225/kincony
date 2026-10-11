@@ -24,3 +24,16 @@ jobs:
           path: |
             .pio/build/a6v3/firmware.bin
             .pio/build/a6v3/firmware.elf
+  arduino-ide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/export-arduino.mjs
+      - uses: arduino/setup-arduino-cli@v2
+      - run: arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+      - run: arduino-cli core install esp32:esp32@2.0.17 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+      - run: arduino-cli lib install 'ArduinoJson@7.3.1'
+      - run: arduino-cli compile --fqbn 'esp32:esp32:esp32s3:FlashSize=16M,FlashMode=qio,PSRAM=opi,USBMode=hwcdc,CDCOnBoot=cdc,PartitionScheme=app3M_fat9M_16MB' arduino/Serre_Avicole_A6v3

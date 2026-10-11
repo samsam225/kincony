@@ -135,3 +135,6 @@ Suivre [les essais physiques et les critères d’acceptation](docs/VALIDATION_P
 Restent à confirmer : modèle/plage NH3 sur l’étiquette, affectation réelle R1…R6, consignes par espèce/âge, politiques de repli, transceiver/direction, isolation et référence de masse, terminaison, alimentation, protections et contacts réels. Les résultats de tests logiciels ne démontrent aucune de ces propriétés physiques.
 
 La notice NH3 déconseille son usage pour la sécurité des personnes et interdit les essais au briquet ou au gaz pur. Vérifier uniquement avec un **gaz étalon adapté, dans la plage du capteur, selon la procédure fabricant**, sans essai improvisé.
+## Arduino IDE
+
+Une version prête à ouvrir se trouve dans `arduino/Serre_Avicole_A6v3/Serre_Avicole_A6v3.ino`. Voir [les réglages Arduino IDE](docs/ARDUINO_IDE.md). Régénération : `node scripts/export-arduino.mjs`.
