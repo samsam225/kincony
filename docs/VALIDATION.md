@@ -14,11 +14,11 @@
 
 ## Compilation et vérifications C++ observées en CI
 
-Le [workflow du commit d976592](https://github.com/samsam225/kincony/actions/runs/38176799707) est **réussi** : tests Node, compilation et tests C++ natifs, comparaison de **120 étapes identiques** entre arbitres C++/JavaScript, puis compilation **PlatformIO A6v3 ESP32-S3**.
+Le [workflow du commit f4d1d7a](https://github.com/samsam225/kincony/actions/runs/38178253227) est **réussi** : 22 tests Node, compilation et 65 assertions C++ réussies, comparaison de **120 étapes identiques** entre arbitres C++/JavaScript, puis compilation **PlatformIO A6v3 ESP32-S3**.
 
-Bilan observé de cette compilation : RAM 63460 / 327680 octets (19,4 %), firmware 843297 / 3145728 octets de partition application (26,8 %). Le binaire et l’ELF ont été produits en artefact ; **aucun téléversement** n’est prévu dans le workflow.
+Bilan observé de cette compilation : RAM 63460 / 327680 octets (19,4 %), firmware 844057 / 3145728 octets de partition application (26,8 %). Le binaire et l’ELF ont été produits en artefact ; **aucun téléversement** n’est prévu dans le workflow.
 
-Les derniers changements ajoutent le test d’interface, renforcent les essais de défauts et bloquent la modification des réglages pendant une impulsion. Vérifier le statut du dernier commit dans GitHub Actions pour la compilation correspondante ; un succès ancien ne valide pas automatiquement un commit ultérieur.
+Ce succès concerne les derniers fichiers de code : test d’interface, essais renforcés des défauts, sélection explicite du profil d’âge et blocage des réglages pendant une impulsion inclus. Le présent compte rendu est une mise à jour documentaire seule ; le commit de code validé est f4d1d7ab7bded98271f60080bee3cc26e2c21df4.
 
 L’environnement local ne disposait ni de compilateur C++ natif ni de PlatformIO dans le PATH. Les compilations ci-dessus ont été réalisées sur le runner GitHub, pas sur la carte. Le rendu graphique mobile n’a pas été validé : Chrome headless local a rencontré un problème de GPU/sandbox ; seul le test DOM est revendiqué.
 
