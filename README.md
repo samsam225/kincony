@@ -2,7 +2,7 @@
 
 Firmware Arduino / PlatformIO pour **KC868-A6v3 ESP32-S3 N16R8**, six relais, TS85-B et transmetteur NH3 RS485. Interface française adaptée au téléphone, fonctionnement local, modes observation/manuels/automatiques, simulateur sans matériel et tests. Le dépôt était vide lors de l’inspection.
 
-**État initial : observation, relais et politiques non confirmés, matériel et bus non confirmés, modèle NH3 provisoire, consignes non validées. Aucun équipement ne peut être actionné avec cette configuration.** Aucun firmware n’a été téléversé et aucun essai matériel n’est revendiqué. Voir [résultats de validation](docs/VALIDATION.md) pour distinguer les tests réellement exécutés des tests à réaliser.
+**État initial : observation, relais et politiques non confirmés, matériel et bus non confirmés, modèle NH3 provisoire, consignes non validées. Aucun équipement ne peut être actionné avec cette configuration. L’utilisateur indique qu’aucun appareil n’est branché sur les relais pour l’instant.** Aucun firmware n’a été téléversé et aucun essai matériel n’est revendiqué. Voir [résultats de validation](docs/VALIDATION.md) pour distinguer les tests réellement exécutés des tests à réaliser.
 
 ## Architecture
 
@@ -37,7 +37,7 @@ Ouvrir `http://127.0.0.1:8080`. Utilisateur **admin**, mot de passe aléatoire a
 
 Le simulateur conserve les réglages dans `simulator/state.local.json`, ignoré par Git. Au redémarrage, il revient en observation et oublie les commandes manuelles et l’attestation de préchauffage. Supprimer ce fichier local pour retrouver l’exemple initial.
 
-Le banc de simulation permet défauts timeout/CRC/exception/péremption, changement des mesures, avance du temps, perte réseau et redémarrage. Les confirmations dans le simulateur portent sur des appareils virtuels. Pour essayer l’automatique virtuel, confirmer les champs matériels/bus/modèle, le profil avicole et les affectations/politiques voulues dans le JSON ; attester le préchauffage simulé puis choisir Automatique. Les valeurs d’exemple servent aux tests, **pas à valider des consignes avicoles**.
+Le banc de simulation permet défauts timeout/CRC/exception/péremption, changement des mesures, avance du temps, perte réseau et redémarrage. Les confirmations dans le simulateur portent sur des appareils virtuels. Pour essayer l’automatique virtuel, effectuer d’abord la mise en service NH3 virtuelle (adresse/vitesse, redémarrage simulé, relecture), puis confirmer les champs matériels/bus/modèle, le profil avicole et les affectations/politiques voulues dans le JSON ; attester le préchauffage simulé puis choisir Automatique. Les valeurs d’exemple servent aux tests, **pas à valider des consignes avicoles**.
 
 ### C++ natif
 

@@ -1,19 +1,26 @@
 # Validation logicielle et état du matériel
 
-11 octobre 2026.
+11 octobre 2026. Aucun appareil n’est branché aux six relais pour l’instant, selon l’utilisateur. Toutes les affectations/politiques restent non confirmées dans l’exemple.
 
 ## Résultats locaux exécutés
 
-- `node --test tests/core.test.mjs` : **19 tests réussis** (CRC, décodages des notices, plages NH3, défauts, préchauffage, hystérésis, temporisations, ventilation, chauffage/humidification, redémarrage, perte réseau, impulsions et profils d’âge).
-- `node --test tests/http.test.mjs` : **1 test d’intégration HTTP réussi**, avec authentification, refus CSRF, page/interface, blocage automatique, mise en service d’un NH3 virtuel isolé, redémarrage virtuel, relecture, refus d’étalonnage et commandes interdites.
-- `node --check web/app.js` et `node --check simulator/server.mjs` : réussis.
-- Notices locales lues ; tableau des registres et incohérences documentés. Sources officielles A6v3 consultées et citées.
+- `npm test` : **22 tests réussis**. Vingt tests de logique, un test d’intégration HTTP et un test DOM de l’interface française.
+- Décodages exacts des notices : températures positives/négatives, humidité, CO2, facteurs NH3 et variante trois-en-un ; CRC erroné de la notice NH3 rejeté.
+- Validité, péremption, préchauffage explicite, hystérésis, temporisations, ventilation minimale/renforcée, conflits prioritaires, modes, politiques de défaut, redémarrage et maintien local sans réseau.
+- HTTP : authentification et CSRF, refus de commandes non confirmées, configuration, NH3 virtuel isolé, écritures adresse/vitesse, redémarrage virtuel et relecture. Essais de mesures valides puis timeout, CRC, exception et données périmées avec compteurs vérifiés.
+- DOM : quatre mesures, six relais non confirmés désactivés, statut NH3 non valide pendant préchauffage, requêtes CSRF, nom utilisateur rendu comme texte et sélection explicite du profil d’âge.
+- `npm run check` : syntaxe JavaScript de l’interface et du serveur réussie.
+- Notices locales lues ; sources A6v3 et incohérences documentées.
 
-## Compilation et vérifications C++
+## Compilation et vérifications C++ observées en CI
 
-Les tests C++ et la comparaison de 120 étapes C++/JavaScript sont fournis. La CI `.github/workflows/validation.yml` les exécute puis compile le firmware PlatformIO A6v3. **La présence de ce workflow ne prouve pas sa réussite** : consulter le résultat du commit dans GitHub Actions avant utilisation du binaire.
+Le [workflow du commit d976592](https://github.com/samsam225/kincony/actions/runs/38176799707) est **réussi** : tests Node, compilation et tests C++ natifs, comparaison de **120 étapes identiques** entre arbitres C++/JavaScript, puis compilation **PlatformIO A6v3 ESP32-S3**.
 
-L’environnement local initial ne disposait ni de compilateur C++ natif ni de PlatformIO dans le PATH ; les téléchargements directs étaient restreints. Aucun résultat de compilation locale n’est revendiqué ici. Les résultats observés de CI, s’ils deviennent disponibles, doivent être reportés avec leur commit.
+Bilan observé de cette compilation : RAM 63460 / 327680 octets (19,4 %), firmware 843297 / 3145728 octets de partition application (26,8 %). Le binaire et l’ELF ont été produits en artefact ; **aucun téléversement** n’est prévu dans le workflow.
+
+Les derniers changements ajoutent le test d’interface, renforcent les essais de défauts et bloquent la modification des réglages pendant une impulsion. Vérifier le statut du dernier commit dans GitHub Actions pour la compilation correspondante ; un succès ancien ne valide pas automatiquement un commit ultérieur.
+
+L’environnement local ne disposait ni de compilateur C++ natif ni de PlatformIO dans le PATH. Les compilations ci-dessus ont été réalisées sur le runner GitHub, pas sur la carte. Le rendu graphique mobile n’a pas été validé : Chrome headless local a rencontré un problème de GPU/sandbox ; seul le test DOM est revendiqué.
 
 ## Non exécutés
 

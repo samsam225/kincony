@@ -14,7 +14,7 @@ export function createSimulator({config=JSON.parse(fs.readFileSync(path.join(roo
  const now=()=>Date.now()-start+offset,hex=b=>b.map(v=>v.toString(16).padStart(2,'0')).join(' ');
  const store=()=>{if(persist)fs.writeFileSync(local,JSON.stringify(ctl.config,null,2));};
  function acceptSensor(key,t){
-  const nh=ctl.config.sensors.nh,isTs=key==='ts',fault=faults[key],req=request(ctl.config.sensors[key].address,3,isTs||nh.combined?0:2,isTs||nh.combined?3:1);diagnostic.lastTx=hex(req);
+  const nh=ctl.config.sensors.nh,isTs=key==='ts';let fault=faults[key];if(ctl.config.busCommissioned&&(devices[key].address!==ctl.config.sensors[key].address||devices[key].baud!==ctl.config.sensors[key].baud))fault='timeout';const req=request(ctl.config.sensors[key].address,3,isTs||nh.combined?0:2,isTs||nh.combined?3:1);diagnostic.lastTx=hex(req);
   if(fault==='stale')return;
   let words=isTs?[Math.round(fixed[0]*10)&65535,Math.round(fixed[1]*10),Math.round(fixed[2])]:nh.combined?[359,(-75)&65535,Math.round(fixed[3]*(nh.rangePpm===50?10:1))]:[Math.round(fixed[3]*(nh.rangePpm===50?10:1))];
   let reply=frame([req[0],3,words.length*2,...words.flatMap(n=>[n>>>8,n&255])]);
@@ -22,7 +22,7 @@ export function createSimulator({config=JSON.parse(fs.readFileSync(path.join(roo
   const err=fault==='timeout'?'Timeout':checkResponse(reply,req);diagnostic.lastRx=fault==='timeout'?'':hex(reply);diagnostic.status=err;
   if(err!=='OK'){if(err==='Timeout')diagnostic.timeout++;else if(err==='CRC invalide')diagnostic.crc++;else diagnostic.exceptions++;if(isTs)for(let i=0;i<3;i++)ctl.measures[i].error=err;else ctl.measures[3].error=err;return;}
   diagnostic.success++;
-  if(isTs)decodeTs(reply.slice(3,-2)).forEach((v,i)=>ctl.accept(i,v,t));else{ctl.accept(3,decodeNh(reply.slice(3,-2),nh.rangePpm,nh.combined).nh3,t);if(!nh.modelConfirmed)ctl.measures[3].error='Non confirmé';else if(!ctl.warmReady(t))ctl.measures[3].error='Préchauffage';else if(ctl.measures[3].value>nh.rangePpm)ctl.measures[3].error='Hors plage';}
+  if(isTs){decodeTs(reply.slice(3,-2)).forEach((v,i)=>ctl.accept(i,v,t));if(fixed[0]<-40||fixed[0]>120)ctl.measures[0].error='Hors plage';if(fixed[1]<0||fixed[1]>100)ctl.measures[1].error='Hors plage';if(fixed[2]<400||fixed[2]>5000)ctl.measures[2].error='Hors plage';}else{ctl.accept(3,decodeNh(reply.slice(3,-2),nh.rangePpm,nh.combined).nh3,t);if(!nh.modelConfirmed)ctl.measures[3].error='Non confirmé';else if(!ctl.warmReady(t))ctl.measures[3].error='Préchauffage';else if(ctl.measures[3].value>nh.rangePpm)ctl.measures[3].error='Hors plage';}
  }
  function tick(){const t=now();if(pending&&t>=pending.end){acceptSensor(pending.key,t);pending=null;nextBus=t+ctl.config.interTransactionMs;}if(!pending&&t>=nextBus&&(sensor===1||t>=nextPoll)){const key=sensor===0?'ts':'nh';pending={key,end:t+(faults[key]==='timeout'?ctl.config.responseTimeoutMs:20)};sensor=(sensor+1)%2;if(sensor===0)nextPoll=t+ctl.config.pollMs;}
   const before=ctl.relays.map(r=>r.command);ctl.tick(t);ctl.relays.forEach((r,i)=>{if(before[i]!==r.command)ctl.event(t,'relais',`R${i+1} commande ${r.command?'ON':'OFF'} / ${r.reason}`);});
@@ -42,7 +42,7 @@ export function createSimulator({config=JSON.parse(fs.readFileSync(path.join(roo
    }
    if(req.method==='POST'){
     const d=await payload(req),t=now();
-    if(url.pathname==='/api/config'){ctl.configure(validateConfig(d),t);store();return send(200,'Enregistré ; observation et préchauffage à attester','text/plain');}
+    if(url.pathname==='/api/config'){ctl.configure(validateConfig(d),t);pending=null;sensor=0;nextPoll=t;nextBus=t;lastSample=t;store();return send(200,'Enregistré ; observation et préchauffage à attester','text/plain');}
     if(url.pathname==='/api/mode'){ctl.setMode(d.mode,t);return send(200,'Mode changé','text/plain');}
     if(url.pathname==='/api/relay'){ctl.manualCommand(d.index,d.on,t);return send(200,'Demande enregistrée ; arbitrage applicable','text/plain');}
     if(url.pathname==='/api/pulse'){ctl.pulse(d.index,d.durationMs,t,d.benchConfirmed);return send(200,'Impulsion simulée lancée','text/plain');}

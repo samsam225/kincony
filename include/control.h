@@ -46,6 +46,7 @@ class Controller {
  bool manualCommand(int i,bool on){if(i<0||i>=6||mode!=Mode::Manual||!config.relays[i].confirmed||!config.relays[i].policyConfirmed)return false;manual[i]=on;return true;}
  bool pulse(int i,uint32_t duration,uint64_t now){if(i<0||i>=6||duration<100||duration>2000||mode!=Mode::Observation||!config.relays[i].confirmed||!config.relays[i].policyConfirmed||config.relays[i].observation!=Policy::Off||pulseIndex>=0)return false;for(auto& r:relays)if(r.command)return false;pulseIndex=i;pulseEnd=now+duration;startup=false;return true;}
  bool fault(uint64_t now)const{for(auto& m:measures)if(!m.valid(now,config.staleMs))return true;return false;}
+ bool pulsing()const{return pulseIndex>=0;}
  bool gasDemand()const{return co2||nh3;}
  bool boostDemand()const{return hot||humid||co2||nh3;}
  void tick(uint64_t now){
