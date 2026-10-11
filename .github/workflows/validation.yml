@@ -1,0 +1,26 @@
+name: Tests et compilation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm test && npm run check
+      - run: cmake -S . -B build && cmake --build build && ctest --test-dir build --output-on-failure
+      - run: node scripts/parity.mjs build/control_cli
+      - run: python -m pip install platformio==6.1.18
+      - run: pio run -e a6v3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware-a6v3-non-televerse
+          path: |
+            .pio/build/a6v3/firmware.bin
+            .pio/build/a6v3/firmware.elf

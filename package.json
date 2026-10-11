@@ -1,0 +1,1 @@
+{"name":"kincony-serre-avicole","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs","simulate":"node simulator/server.mjs","check":"node --check web/app.js && node --check simulator/server.mjs"},"engines":{"node":">=20"}}

@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "hardwareConfirmed": false,
+  "busCommissioned": false,
+  "species": "À définir",
+  "ageDays": 0,
+  "staleMs": 15000,
+  "pollMs": 5000,
+  "responseTimeoutMs": 1000,
+  "interTransactionMs": 250,
+  "sensors": {
+    "ts": {
+      "address": 1,
+      "baud": 9600
+    },
+    "nh": {
+      "address": 2,
+      "baud": 9600,
+      "model": "À confirmer",
+      "modelConfirmed": false,
+      "rangePpm": 500,
+      "combined": false
+    }
+  },
+  "profiles": [
+    {
+      "species": "À définir",
+      "minAgeDays": 0,
+      "maxAgeDays": 9999,
+      "validated": false,
+      "rules": {
+        "hot": {
+          "value": 30,
+          "hysteresis": 1
+        },
+        "humid": {
+          "value": 80,
+          "hysteresis": 5
+        },
+        "co2": {
+          "value": 1500,
+          "hysteresis": 100
+        },
+        "nh3": {
+          "value": 15,
+          "hysteresis": 2
+        },
+        "cold": {
+          "value": 20,
+          "hysteresis": 1
+        },
+        "dry": {
+          "value": 40,
+          "hysteresis": 5
+        },
+        "minVentPeriodMs": 300000,
+        "minVentOnMs": 60000
+      }
+    }
+  ],
+  "relays": [
+    {
+      "name": "Ventilation principale",
+      "role": "vent_main",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "on",
+      "sensorFault": "on",
+      "observation": "off",
+      "network": "continue_local"
+    },
+    {
+      "name": "Ventilation complémentaire",
+      "role": "vent_extra",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "off",
+      "sensorFault": "on",
+      "observation": "off",
+      "network": "continue_local"
+    },
+    {
+      "name": "Chauffage",
+      "role": "heating",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "off",
+      "sensorFault": "off",
+      "observation": "off",
+      "network": "continue_local"
+    },
+    {
+      "name": "Humidification provisoire",
+      "role": "humidifier",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "off",
+      "sensorFault": "off",
+      "observation": "off",
+      "network": "continue_local"
+    },
+    {
+      "name": "Éclairage",
+      "role": "lighting",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "off",
+      "sensorFault": "off",
+      "observation": "off",
+      "network": "continue_local"
+    },
+    {
+      "name": "Alarme",
+      "role": "alarm",
+      "confirmed": false,
+      "policyConfirmed": false,
+      "minOnMs": 30000,
+      "minOffMs": 30000,
+      "startup": "on",
+      "sensorFault": "on",
+      "observation": "off",
+      "network": "continue_local"
+    }
+  ]
+}

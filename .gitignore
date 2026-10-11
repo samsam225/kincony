@@ -1,0 +1,11 @@
+.pio/
+build/
+node_modules/
+include/secrets.local.h
+config.local.json
+simulator/state.local.json
+*.log
+*.bin
+*.elf
+*.map
+include/generated.h
